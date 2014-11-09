@@ -1,0 +1,64 @@
+{
+  "uuid": "54f918be-893e-433d-aa87-a84e55e24f6b",
+  "shortName": "iDoc360",
+  "longName": "iDoc360",
+  "companyName": "Edwin Finch Software",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": [
+                {
+                  "file": "fonts/impact.ttf",
+                  "name": "FONT_IMPACT_18",
+                  "type": "font"
+                },
+                {
+                  "file": "fonts/impact.ttf",
+                  "name": "FONT_IMPACT_48",
+                  "type": "font"
+                },
+                {
+                  "file": "images/background.png",
+                  "name": "IMAGE_BASE",
+                  "type": "png"
+                },
+                {
+                  "file": "images/bt-icon.png",
+                  "name": "IMAGE_BT_ICON",
+                  "type": "png"
+                },
+                {
+                  "file": "images/watchface.png",
+                  "name": "IMAGE_WATCHFACE_ICON",
+                  "type": "png"
+                },
+                {
+                  "file": "images/settings.png",
+                  "name": "IMAGE_SETTINGS_ICON",
+                  "type": "png"
+                },
+                {
+                  "file": "images/log_icon.png",
+                  "name": "IMAGE_LOG_ICON",
+                  "type": "png"
+                },
+                {
+                  "file": "images/aboot_fix.png",
+                  "name": "IMAGE_ABOOT_ICON",
+                  "type": "png"
+                },
+                {
+                  "file": "images/gesture_icon.png",
+                  "name": "IMAGE_GESTURE_ICON",
+                  "type": "png"
+                }
+
+    ]
+  }
+}
