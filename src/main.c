@@ -1,22 +1,8 @@
 #include <pebble.h>
 #include "blks.h"
 #include "main.h"
-
-TextLayer *text_layer_init(GRect location, GColor background, GTextAlignment alignment, int font){
-	TextLayer *layer = text_layer_create(location);
-	text_layer_set_text_color(layer, GColorBlack);
-	text_layer_set_background_color(layer, background);
-	text_layer_set_text_alignment(layer, alignment);
-	switch(font){
-		case 1:
-			text_layer_set_font(layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
-			break;
-		case 2:
-			text_layer_set_font(layer, fonts_get_system_font(FONT_KEY_GOTHIC_24));
-			break;
-	}
-	return layer;
-}
+#include "double_tap.h"
+#include "extras.h"
 
 void select(ClickRecognizerRef click, void *context){
 	window_stack_push(menu_window, true);
@@ -52,7 +38,15 @@ void inbox(DictionaryIterator *iter, void *context){
 }
 
 void override_gesture(ClickRecognizerRef click, void *context){
-	
+	if(settings.override){
+		switch(settings.gesture){
+			case 0:
+				double_tap();
+				break;
+			case 1:
+				break;
+		}
+	}
 }
 
 void click_prov(void *context){
@@ -203,7 +197,7 @@ void window_load_aboot(Window *w){
 	aboot_theme = inverter_layer_create(GRect(0, 0, 144, 168));
 	
 	text_layer_set_text(aboot_edwin, "Created by Edwin Finch");
-	text_layer_set_text(aboot_version, "v. 0.4 alpha");
+	text_layer_set_text(aboot_version, "v. 0.5 alpha");
 	
 	layer_add_child(window_layer, text_layer_get_layer(aboot_edwin));
 	layer_add_child(window_layer, text_layer_get_layer(aboot_version));
@@ -216,6 +210,18 @@ void window_unload_aboot(Window *m8){
 	inverter_layer_destroy(aboot_theme);
 }
 
+void init_gesture(){
+	accel_tap_service_unsubscribe();
+	switch(settings.gesture){
+		case 0:
+			init_double_tap();
+			break;
+		case 1:
+			//Add more gestures...
+			break;
+	}
+}
+
 void init(){
 	blks_window = window_create();
 	window_set_fullscreen(blks_window, true);
@@ -225,6 +231,8 @@ void init(){
 
 	int result = persist_read_data(0, &settings, sizeof(settings));
 	APP_LOG(APP_LOG_LEVEL_INFO, "iDoc360: Read %d bytes from settings.", result);
+
+	init_gesture();
 
 	window_stack_push(blks_window, true);
 

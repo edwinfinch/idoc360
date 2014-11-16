@@ -1,5 +1,7 @@
 #include <pebble.h>
 #include "blks.h"
+#include "notification.h"
+#include "extras.h"
 
 TextLayer *hour_1, *hour_2, *minute_1, *minute_2, *date_layer;
 
@@ -35,34 +37,13 @@ GRect initial_1, initial_2, initial_3, initial_4;
 	
 void animation_callback(void *data);
 	
-static TextLayer* text_layer_init(GRect location)
-{
+TextLayer* text_layer_init_BLKS(GRect location){
 	TextLayer *layer = text_layer_create(location);
 	text_layer_set_text_color(layer, GColorBlack);
 	text_layer_set_background_color(layer, GColorClear);
 	text_layer_set_text_alignment(layer, GTextAlignmentCenter);
 	text_layer_set_font(layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_48)));
 	return layer;
-}
-
-void stopped(Animation *anim, bool finished, void *context)
-{
-    property_animation_destroy((PropertyAnimation*) anim);
-}
- 
-void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int delay)
-{
-    PropertyAnimation *anim = property_animation_create_layer_frame(layer, start, finish);
-     
-    animation_set_duration((Animation*) anim, duration);
-    animation_set_delay((Animation*) anim, delay);
-     
-    AnimationHandlers handlers = {
-        .stopped = (AnimationStoppedHandler) stopped
-    };
-    animation_set_handlers((Animation*) anim, handlers, NULL);
-     
-    animation_schedule((Animation*) anim);
 }
 
 void animate(bool cov1, bool cov2, bool cov3, bool cov4, bool boot){
@@ -335,35 +316,35 @@ void load_blks(Window *window){
 	bitmap_layer_set_bitmap(bt_image_layer, bt_image);
 	layer_add_child(window_layer, bitmap_layer_get_layer(bt_image_layer));
 	
-	hour_1 = text_layer_init(GRect(22, 8, 28, 50));
+	hour_1 = text_layer_init_BLKS(GRect(22, 8, 28, 50));
 	layer_add_child(window_layer, text_layer_get_layer(hour_1));
 	
-	hour_2 = text_layer_init(GRect(97, 8, 28, 50));
+	hour_2 = text_layer_init_BLKS(GRect(97, 8, 28, 50));
 	layer_add_child(window_layer, text_layer_get_layer(hour_2));
 	
-	minute_1 = text_layer_init(GRect(22, 85, 28, 50));
+	minute_1 = text_layer_init_BLKS(GRect(22, 85, 28, 50));
 	layer_add_child(window_layer, text_layer_get_layer(minute_1));
 	
-	minute_2 = text_layer_init(GRect(97, 85, 28, 50));
+	minute_2 = text_layer_init_BLKS(GRect(97, 85, 28, 50));
 	layer_add_child(window_layer, text_layer_get_layer(minute_2));
 	
-	cov_1 = text_layer_init(final_1);
+	cov_1 = text_layer_init_BLKS(final_1);
 	text_layer_set_background_color(cov_1, GColorWhite);
 	layer_add_child(window_layer, text_layer_get_layer(cov_1));
 	
-	cov_2 = text_layer_init(final_2);
+	cov_2 = text_layer_init_BLKS(final_2);
 	text_layer_set_background_color(cov_2, GColorWhite);
 	layer_add_child(window_layer, text_layer_get_layer(cov_2));
 	
-	cov_3 = text_layer_init(final_3);
+	cov_3 = text_layer_init_BLKS(final_3);
 	text_layer_set_background_color(cov_3, GColorWhite);
 	layer_add_child(window_layer, text_layer_get_layer(cov_3));
 	
-	cov_4 = text_layer_init(final_4);
+	cov_4 = text_layer_init_BLKS(final_4);
 	text_layer_set_background_color(cov_4, GColorWhite);
 	layer_add_child(window_layer, text_layer_get_layer(cov_4));
 	
-	date_layer = text_layer_init(GRect(0, 65, 144, 168));
+	date_layer = text_layer_init_BLKS(GRect(0, 65, 144, 168));
 	text_layer_set_font(date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMPACT_18)));
 	text_layer_set_text_color(date_layer, GColorWhite);
 	layer_add_child(window_layer, text_layer_get_layer(date_layer));

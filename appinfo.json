@@ -3,8 +3,8 @@
   "shortName": "iDoc360",
   "longName": "iDoc360",
   "companyName": "Edwin Finch Software",
-  "versionCode": 1,
-  "versionLabel": "1.0",
+  "versionCode": 2,
+  "versionLabel": "0.5",
   "watchapp": {
     "watchface": false
   },
@@ -22,6 +22,12 @@
                   "file": "fonts/impact.ttf",
                   "name": "FONT_IMPACT_48",
                   "type": "font"
+                },
+                {
+                  "file": "images/menu_icon.png",
+                  "menuIcon": true,
+                  "name": "MENU_ICON",
+                  "type": "png"
                 },
                 {
                   "file": "images/background.png",
