@@ -280,6 +280,10 @@ void unload_blks(){
 	text_layer_destroy(hour_2);
 	text_layer_destroy(minute_1);
 	text_layer_destroy(minute_2);
+	text_layer_destroy(cov_1);
+	text_layer_destroy(cov_2);
+	text_layer_destroy(cov_3);
+	text_layer_destroy(cov_4);
 	bitmap_layer_destroy(bt_image_layer);
 	bitmap_layer_destroy(background_layer);
 	layer_destroy(battery_layer);
@@ -369,4 +373,6 @@ void load_blks(Window *window){
 	blks_bt(hello);
 	
 	animate(1, 1, 1, 1, 1);
+
+	tick_timer_service_subscribe(SECOND_UNIT, blks_tick);
 }

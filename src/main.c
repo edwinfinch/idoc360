@@ -3,6 +3,7 @@
 #include "main.h"
 #include "double_tap.h"
 #include "extras.h"
+#include "simplicity.h"
 
 void select(ClickRecognizerRef click, void *context){
 	window_stack_push(menu_window, true);
@@ -81,10 +82,26 @@ void override_callback(int index, void *ctx){
 	redraw_menu(1);
 }
 
+void bt_handler(){
+	bool connected = bluetooth_connection_service_peek();
+	if(connected != previousStatus){
+		if(connected){
+			vibes_double_pulse();
+		}
+		else{
+			vibes_long_pulse();
+		}
+		previousStatus = connected;
+	}
+	bt_timer = app_timer_register(1000, bt_handler, NULL);
+}
+
 void bt_callback(int index, void *ctx){
 	settings.btalerts = !settings.btalerts;
+	app_timer_cancel(bt_timer);
 	if(settings.btalerts){
 		s_menu_settings_items[0].subtitle = "Enabled.";
+		bt_timer = app_timer_register(1000, bt_handler, NULL);
 	}
 	else{
 		s_menu_settings_items[0].subtitle = "Disabled.";
@@ -98,6 +115,73 @@ void settings_callback(int index, void *ctx){
 
 void aboot_callback(int index, void *ctx){
 	window_stack_push(aboot_window, true);
+}
+
+void wf_callback(int index, void *ctx){
+	window_stack_push(wf_window, true);
+}
+
+void debug_callback(int index, void *ctx){
+	window_stack_push(debug_window, true);
+}
+
+void wf_sel_callback(int index, void *ctx){
+	settings.watchface = index;
+	for(int i = 0; i < 2; i++){
+		wf_menu_items[i].subtitle = " ";
+	}
+	wf_menu_items[settings.watchface].subtitle = "Selected";
+	layer_mark_dirty(simple_menu_layer_get_layer(wf_choice_menu));
+
+	switch(watchfaceCurrent){
+		case 0:
+			unload_blks();
+			break;
+		case 1:
+			simplicity_unload(watchface_window);
+			break;
+	}
+	watchfaceCurrent = settings.watchface;
+	switch(settings.watchface){
+		case 0:
+			load_blks(watchface_window);
+			break;
+		case 1:
+			simplicity_load(watchface_window);
+			break;
+	}
+	APP_LOG(APP_LOG_LEVEL_INFO, "%d index", index);
+}
+
+void window_load_wf(Window *window){
+	Layer *window_layer = window_get_root_layer(window);
+	GRect bounds = layer_get_frame(window_layer);
+	
+	wf_menu_items[0] = (SimpleMenuItem){
+		.title = "Blocks",
+		.callback = wf_sel_callback,
+	};
+	wf_menu_items[1] = (SimpleMenuItem){
+		.title = "Simplicity",
+		.callback = wf_sel_callback,
+	};
+	
+	for(int i = 0; i < 2; i++){
+		wf_menu_items[i].subtitle = " ";
+	}
+	wf_menu_items[watchfaceCurrent].subtitle = " ";
+
+	wf_menu_sections[0] = (SimpleMenuSection){
+		.num_items = 2,
+		.items = wf_menu_items,
+	};
+	
+	wf_choice_menu = simple_menu_layer_create(bounds, wf_window, wf_menu_sections, 1, NULL);
+	layer_add_child(window_layer, simple_menu_layer_get_layer(wf_choice_menu));
+}
+
+void window_unload_wf(Window *window){
+	simple_menu_layer_destroy(wf_choice_menu);
 }
 
 void window_load_settings_menu(Window *w){
@@ -145,7 +229,7 @@ void window_load_menu(Window *w){
 	
 	menu_settings_items[0] = (SimpleMenuItem){
 		.title = "Watchface",
-		.callback = callback,
+		.callback = wf_callback,
 		.icon = wf_icon
 	};
 	menu_settings_items[1] = (SimpleMenuItem){
@@ -155,7 +239,7 @@ void window_load_menu(Window *w){
 	};
 	menu_settings_items[2] = (SimpleMenuItem){
 		.title = "Debug Log",
-		.callback = callback,
+		.callback = debug_callback,
 		.icon = log_icon
 	};
 	menu_settings_items[3] = (SimpleMenuItem){
@@ -197,7 +281,7 @@ void window_load_aboot(Window *w){
 	aboot_theme = inverter_layer_create(GRect(0, 0, 144, 168));
 	
 	text_layer_set_text(aboot_edwin, "Created by Edwin Finch");
-	text_layer_set_text(aboot_version, "v. 0.5 alpha");
+	text_layer_set_text(aboot_version, "v. 0.6.0 alpha");
 	
 	layer_add_child(window_layer, text_layer_get_layer(aboot_edwin));
 	layer_add_child(window_layer, text_layer_get_layer(aboot_version));
@@ -223,18 +307,29 @@ void init_gesture(){
 }
 
 void init(){
-	blks_window = window_create();
-	window_set_fullscreen(blks_window, true);
-	load_blks(blks_window);
+	watchface_window = window_create();
+	window_set_fullscreen(watchface_window, true);
+	switch(settings.watchface){
+		case 0:
+			load_blks(watchface_window);
+			break;
+		case 1:
+			simplicity_load(watchface_window);
+			break;
+	}
+	watchfaceCurrent = settings.watchface;
 
-	window_set_click_config_provider(blks_window, click_prov);
+	window_set_click_config_provider(watchface_window, click_prov);
 
 	int result = persist_read_data(0, &settings, sizeof(settings));
 	APP_LOG(APP_LOG_LEVEL_INFO, "iDoc360: Read %d bytes from settings.", result);
 
 	init_gesture();
 
-	window_stack_push(blks_window, true);
+	bt_timer = app_timer_register(1000, bt_handler, NULL);
+	previousStatus = bluetooth_connection_service_peek();
+
+	window_stack_push(watchface_window, true);
 
 	app_message_register_inbox_received(inbox);
 	app_message_open(512, 512);
@@ -250,6 +345,11 @@ void init(){
 	window_set_window_handlers(menu_window, (WindowHandlers){
 		.load = window_load_menu,
 		.unload = window_unload_menu
+	});
+	wf_window = window_create();
+	window_set_window_handlers(wf_window, (WindowHandlers){
+		.load = window_load_wf,
+		.unload = window_unload_wf
 	});
 	settings_window = window_create();
 	window_set_window_handlers(settings_window, (WindowHandlers){
@@ -271,12 +371,12 @@ void init(){
 void deinit(){
 	int result = persist_write_data(0, &settings, sizeof(settings));
 	APP_LOG(APP_LOG_LEVEL_INFO, "iDoc360: Wrote %d bytes to settings.", result);
-	unload_blks();
-	window_destroy(blks_window);
+	window_destroy(watchface_window);
 	window_destroy(menu_window);
 	window_destroy(settings_window);
 	window_destroy(debug_window);
 	window_destroy(aboot_window);
+	window_destroy(wf_window);
 }
 
 int main(){
