@@ -4,38 +4,11 @@
 #include "double_tap.h"
 #include "extras.h"
 #include "simplicity.h"
+#include "gesture.h"
+#include "data_framework.h"
 
 void select(ClickRecognizerRef click, void *context){
 	window_stack_push(menu_window, true);
-}
-
-void process_tuple(Tuple *t){
-	int key = t->key;
-	int value = t->value->int32;
-	//if(settings.debug){APP_LOG(APP_LOG_LEVEL_INFO, "key: %d, data %d", key, value);}
-	switch(key){
-		case 0:
-			switch(value){
-
-			}
-			break;
-	}
-}
-
-void inbox(DictionaryIterator *iter, void *context){
-	Tuple *t = dict_read_first(iter);
-	if(t)
-	{
-		process_tuple(t);
-	}
-	while(t != NULL)
-	{
-		t = dict_read_next(iter);
-		if(t)
-		{
-			process_tuple(t);
-		}
-	}
 }
 
 void override_gesture(ClickRecognizerRef click, void *context){
@@ -45,8 +18,32 @@ void override_gesture(ClickRecognizerRef click, void *context){
 				double_tap();
 				break;
 			case 1:
+				APP_LOG(APP_LOG_LEVEL_INFO, "Fire!");
 				break;
 		}
+	}
+	send_data(0);
+}
+
+void init_gesture(){
+	switch(settings.gesture){
+		case 0:
+			init_double_tap();
+			break;
+		case 1:
+			start_gesture_service();
+			break;
+	}
+}
+
+void deinit_gesture(){
+	switch(settings.gesture){
+		case 0:
+			deinit_double_tap();
+			break;
+		case 1:
+			end_gesture_service();
+			break;
 	}
 }
 
@@ -184,6 +181,24 @@ void window_unload_wf(Window *window){
 	simple_menu_layer_destroy(wf_choice_menu);
 }
 
+void gesture_callback(int index, void *ctx){
+	deinit_gesture();
+	settings.gesture++;
+	if(settings.gesture > GESTURE_CAP){
+		settings.gesture = 0;
+	}
+	switch(settings.gesture){
+		case 0:
+			s_menu_settings_items[2].subtitle = "Shake";
+			break;
+		case 1:
+			s_menu_settings_items[2].subtitle = "Fast wave";
+			break;
+	}
+	init_gesture();
+	redraw_menu(1);
+}
+
 void window_load_settings_menu(Window *w){
 	Layer *window_layer = window_get_root_layer(settings_window);
 	GRect bounds = layer_get_frame(window_layer);
@@ -196,9 +211,13 @@ void window_load_settings_menu(Window *w){
 		.title = "Override Gesture",
 		.callback = override_callback,
 	};
+	s_menu_settings_items[2] = (SimpleMenuItem){
+		.title = "Gesture",
+		.callback = gesture_callback,
+	};
 	
 	s_menu_sections[0] = (SimpleMenuSection){
-		.num_items = 2,
+		.num_items = 3,
 		.items = s_menu_settings_items,
 	};
 
@@ -213,6 +232,14 @@ void window_load_settings_menu(Window *w){
 	}
 	else{
 		s_menu_settings_items[0].subtitle = "Disabled.";
+	}
+	switch(settings.gesture){
+		case 0:
+			s_menu_settings_items[2].subtitle = "Shake";
+			break;
+		case 1:
+			s_menu_settings_items[2].subtitle = "Fast wave";
+			break;
 	}
 	
 	settings_menu = simple_menu_layer_create(bounds, settings_window, s_menu_sections, 1, NULL);
@@ -233,28 +260,23 @@ void window_load_menu(Window *w){
 		.icon = wf_icon
 	};
 	menu_settings_items[1] = (SimpleMenuItem){
-		.title = "Gesture",
-		.callback = callback,
-		.icon = gesture_icon
-	};
-	menu_settings_items[2] = (SimpleMenuItem){
 		.title = "Debug Log",
 		.callback = debug_callback,
 		.icon = log_icon
 	};
-	menu_settings_items[3] = (SimpleMenuItem){
+	menu_settings_items[2] = (SimpleMenuItem){
 		.title = "About",
 		.callback = aboot_callback,
 		.icon = aboot_icon
 	};
-	menu_settings_items[4] = (SimpleMenuItem){
+	menu_settings_items[3] = (SimpleMenuItem){
 		.title = "Settings",
 		.callback = settings_callback,
 		.icon = settings_icon,
 	};
 	
 	menu_sections[0] = (SimpleMenuSection){
-		.num_items = 5,
+		.num_items = 4,
 		.items = menu_settings_items,
 	};
 	
@@ -267,11 +289,15 @@ void window_unload_menu(Window *w){
 }
 
 void window_load_debug(Window *w){
-
+	debuglog_layer = text_layer_init(GRect(0, 0, 144, 168), GColorClear, GTextAlignmentCenter, 2);
+	text_layer_set_text(debuglog_layer, "Debug window active... waiting on data.");
+	layer_add_child(window_get_root_layer(w), text_layer_get_layer(debuglog_layer));
+	logging(true, debuglog_layer);
 }
 
 void window_unload_debug(Window *w){
-
+	text_layer_destroy(debuglog_layer);
+	logging(false, debuglog_layer);
 }
 
 void window_load_aboot(Window *w){
@@ -281,7 +307,7 @@ void window_load_aboot(Window *w){
 	aboot_theme = inverter_layer_create(GRect(0, 0, 144, 168));
 	
 	text_layer_set_text(aboot_edwin, "Created by Edwin Finch");
-	text_layer_set_text(aboot_version, "v. 0.6.0 alpha");
+	text_layer_set_text(aboot_version, "v. 0.7.0 alpha");
 	
 	layer_add_child(window_layer, text_layer_get_layer(aboot_edwin));
 	layer_add_child(window_layer, text_layer_get_layer(aboot_version));
@@ -292,18 +318,6 @@ void window_unload_aboot(Window *m8){
 	text_layer_destroy(aboot_edwin);
 	text_layer_destroy(aboot_version);
 	inverter_layer_destroy(aboot_theme);
-}
-
-void init_gesture(){
-	accel_tap_service_unsubscribe();
-	switch(settings.gesture){
-		case 0:
-			init_double_tap();
-			break;
-		case 1:
-			//Add more gestures...
-			break;
-	}
 }
 
 void init(){

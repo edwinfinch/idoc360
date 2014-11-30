@@ -1,4 +1,5 @@
 #include <pebble.h>
+#define GESTURE_CAP 1
 
 Window *watchface_window, *menu_window, *settings_window, *debug_window, *aboot_window, *wf_window;
 SimpleMenuLayer *menu_layer;
@@ -11,13 +12,15 @@ InverterLayer *aboot_theme;
 SimpleMenuLayer *main_menu, *settings_menu, *wf_choice_menu;
 
 SimpleMenuSection menu_sections[1];
-SimpleMenuItem menu_settings_items[5];
+SimpleMenuItem menu_settings_items[4];
 
 SimpleMenuSection s_menu_sections[1];
-SimpleMenuItem s_menu_settings_items[2];
+SimpleMenuItem s_menu_settings_items[3];
 
 SimpleMenuItem wf_menu_items[2];
 SimpleMenuSection wf_menu_sections[1];
+
+TextLayer *debuglog_layer;
 
 AppTimer *bt_timer;
 

@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "double_tap.h"
 #include "blks.h"
+#include "data_framework.h"
 
 #define TAP_TIME 2000
 bool is_tapped_waiting;
@@ -18,6 +19,8 @@ void handle_tap(AccelAxisType axis, int32_t direction) {
 void double_tap() {
 	//Todo: BTLE support
 	APP_LOG(APP_LOG_LEVEL_INFO, "tap!");
+	vibes_double_pulse();
+	send_data(0);
 }
 
 void init_double_tap() {
