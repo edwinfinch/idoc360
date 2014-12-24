@@ -1,0 +1,12 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="iDocTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    </style>
+
+    <style name="SplashTheme">
+        <item name="android:windowBackground">@color/secondary_text</item>
+    </style>
+
+</resources>

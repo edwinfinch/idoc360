@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">iDoc360</string>
+    <string name="action_settings">Settings</string>
+    <string name="pebble_title">Pebble Manager</string>
+    <string name="pebble_install">Install/Update Watchapp</string>
+    <string name="pebble_sendpulse">Send Test Signal</string>
+    <string name="devicemangertitle">Device Manager</string>
+    <string name="defaultpebbleconnected">Failed to get signal from Pebble app.
+        Make sure the Pebble app is installed. </string>
+    <string name="appinstalled">iDoc360 isn\'t installed on Pebble.</string>
+    <string name="idocconnected">I don\'t know if iDoc is connected :/</string>
+    <string name="splashscreencheckbox">Splash Screen?</string>
+
+</resources>

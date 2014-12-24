@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="iDocTheme" parent="android:Theme.Material">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/dark_primary</item>
+        <item name="android:colorAccent">@color/text</item>
+        <item name="android:navigationBarColor">@color/dark_primary</item>
+        <item name="android:windowBackground">@color/text_and_icons</item>
+    </style>
+
+    <style name="SplashTheme">
+        <item name="android:colorPrimary">@color/secondary_text</item>
+        <item name="android:colorPrimaryDark">@color/secondary_text</item>
+        <item name="android:colorAccent">@color/text</item>
+        <item name="android:navigationBarColor">@color/secondary_text</item>
+        <item name="android:windowBackground">@color/secondary_text</item>
+    </style>
+
+</resources>
