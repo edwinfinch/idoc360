@@ -16,13 +16,12 @@ public class Splash extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        getActionBar().hide();
 
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Intent launchMain = new Intent(Splash.this, Main.class);
+                Intent launchMain = new Intent(Splash.this, MainActivity.class);
                 Splash.this.startActivity(launchMain);
             }
         }, 3000);

@@ -11,6 +11,7 @@
         android:textSize="80dp"
         android:fontFamily="sans-serif-thin"
         android:id="@+id/textView"
+        android:textColor="@color/text"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="143dp"
         android:layout_alignParentBottom="true"

@@ -4,11 +4,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:theme="@style/iDocTheme" >
         <activity
-            android:name=".Main"
+            android:name="com.edwinfinch.idoc360.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,30 +16,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Settings"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
-            android:name=".Splash"
-            android:label="@string/app_name"
-            android:theme="@style/SplashTheme">
+            android:name="com.edwinfinch.idoc360.Splash"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.edwinfinch.idoc360.Receiver" >
-            <intent-filter>
-                <action android:name="com.getpebble.action.app.RECEIVE" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
