@@ -10,9 +10,9 @@ void process_tuple(Tuple *t){
 	//if(settings.debug){APP_LOG(APP_LOG_LEVEL_INFO, "key: %d, data %d", key, value);}
 	switch(key){
 		case 0:
-			switch(value){
-				//Will we need to get any data from the phone app?
-			}
+			vibes_long_pulse();
+			break;
+		case 1:
 			break;
 	}
 	if(isLogging()){
@@ -25,15 +25,12 @@ void inbox(DictionaryIterator *iter, void *context){
 		text_layer_set_text(logging_layer, "Got data!");
 	}
 	Tuple *t = dict_read_first(iter);
-	if(t)
-	{
+	if(t){
 		process_tuple(t);
 	}
-	while(t != NULL)
-	{
+	while(t != NULL){
 		t = dict_read_next(iter);
-		if(t)
-		{
+		if(t){
 			process_tuple(t);
 		}
 	}
