@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -35,7 +34,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     private PebbleFragment pebble_fragment = new PebbleFragment();
     private DeviceFragment device_fragment = new DeviceFragment();
     private TutorialFragment tutorial_fragment = new TutorialFragment();
-    private SettingsFragment settings_fragment = new SettingsFragment();
+    private OpenSourceFragment open_source_fragment = new OpenSourceFragment();
+    private int fragPosition = 0;
     final private UUID watchAppUUID = UUID.fromString("54f918be-893e-433d-aa87-a84e55e24f6b");
     private boolean connected = false, appOpen = false;
 
@@ -145,6 +145,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         sendDataToPebble(getApplicationContext(), watchAppUUID, testSignal);
     }
 
+    public void openBlks(View view){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/edwinfinch/blks")));
+    }
+
+    public void openUART(View view){
+        final String appPackageName = "com.nordicsemi.nrfUARTv2";
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
     /*
     * Activity overridden functions
     * Such as onCreate, onDestroy, etc.
@@ -175,6 +188,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         // update the main content by replacing fragments
         Fragment fragment = new DefaultFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
+        fragPosition = position;
         switch(position) {
             case 0:
                 fragmentManager.beginTransaction().replace(R.id.container, pebble_fragment).commit();
@@ -186,7 +200,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 fragmentManager.beginTransaction().replace(R.id.container, tutorial_fragment).commit();
                 break;
             case 3:
-                fragmentManager.beginTransaction().replace(R.id.container, settings_fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, open_source_fragment).commit();
                 break;
             default:
                 fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
@@ -200,7 +214,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             mNavigationDrawerFragment.closeDrawer();
         }
         else {
-            super.onBackPressed();
+            switch(fragPosition){
+                case 0:
+                    super.onBackPressed();
+                    break;
+                default:
+                    mNavigationDrawerFragment.selectItem(0);
+                    break;
+            }
         }
     }
 
