@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+        <TextView
+            android:id="@+id/deviceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/device"
+            android:textColor="@color/text"
+            android:textSize="20dp"
+            android:layout_alignTop="@+id/rssival"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/deviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/disconnected"
+            android:textColor="@color/text"
+            android:textSize="15dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/deviceLabel"
+            android:layout_toStartOf="@+id/rssival" />
+
+        <TextView
+            android:id="@+id/rssival"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="_"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/btn_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="@string/connect"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/rssival" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lighton"
+        android:id="@+id/lightOn"
+        android:layout_above="@+id/btn_select"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lightoff"
+        android:id="@+id/lightOff"
+        android:layout_alignTop="@+id/lightOn"
+        android:layout_alignEnd="@+id/rssival" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView6"
+        android:layout_below="@+id/deviceName"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="45dp"
+        android:layout_above="@+id/lightOn"
+        android:layout_alignEnd="@+id/btn_select"
+        android:textColor="@color/text" />
+
+</RelativeLayout>

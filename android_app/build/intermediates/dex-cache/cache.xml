@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="95fd37732ec852e99f07eeb516a3650172f1d136">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/classes-95407a0cb1db22ac2696aa606a490b0e78b45709.jar" />
+    </item>
+    <item
+        jar="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-42e903eb7960958ab008ad57f2640d8cab578704.jar" />
+    </item>
+    <item
+        jar="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/exploded-aar/com.getpebble/pebblekit/2.6.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="660dc1d342b8e31da1cc51e79c66d636a77a1e98">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/classes-d0f2b76f18af43617dfeddbb5cdd46b14025e707.jar" />
+    </item>
+    <item
+        jar="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/classes-c8d7d6eef37cf6b2e2578ca20c9f541a520341f2.jar" />
+    </item>
+    <item
+        jar="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="efeda77c808750cb670ee9c48d8a1835d89dbcb2">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/classes-ebae77d8e3e567b0121c84fa14048770fe8c05c1.jar" />
+    </item>
+    <item
+        jar="/Users/edwinfinch/android_sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.3/support-annotations-21.0.3.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
+        <dex dex="/Users/edwinfinch/AndroidStudioProjects/iDoc360/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-4bbac0158798e41a984a7b9a84af0879b4cd2305.jar" />
+    </item>
+
+</items>

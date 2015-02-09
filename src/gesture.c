@@ -59,7 +59,7 @@ void accel_handler(AccelData *data, uint32_t samples){
 		vibes_double_pulse();
 		releaseTimer = app_timer_register(1500, release_timer_callback, NULL);
 		APP_LOG(APP_LOG_LEVEL_INFO, "Hard wave detected");
-		send_data(0);
+		gesture_fired();
 	}
 }
 

@@ -20,7 +20,7 @@ void double_tap() {
 	//Todo: BTLE support
 	APP_LOG(APP_LOG_LEVEL_INFO, "tap!");
 	vibes_double_pulse();
-	send_data(0);
+	gesture_fired();
 }
 
 void init_double_tap() {

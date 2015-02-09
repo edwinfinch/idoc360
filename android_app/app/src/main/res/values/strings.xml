@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">iDoc360</string>
+    <string name="drawer_open">Menu opened</string>
+    <string name="drawer_close">Menu closed</string>
+    <string name="action_settings">Settings</string>
+    <string name="pebble_title">Pebble Manager</string>
+    <string name="pebble_install">Install</string>
+    <string name="pebble_sendpulse">Send Test Signal</string>
+    <string name="devicemangertitle">Device Manager</string>
+    <string name="defaultpebbleconnected">Failed to get signal from Pebble app.
+        Make sure the Pebble app is installed. </string>
+    <string name="appinstalled">iDoc360 isn\'t installed on Pebble.</string>
+    <string name="idocconnected">No iDoc is currently connected.</string>
+    <string name="splashscreencheckbox">Splash Screen</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="settings">Settings</string>
+    <string name="fragment_error">There was an error while creating the fragment for this app.
+        Please consult support by through the listing on the Play Store, or emailing contact@edwinfinch.com.</string>
+    <string name="debuglog">Debug log</string>
+    <string name="device">Device</string>
+    <string name="connect">Connect</string>
+    <string name="devicetests">Device Tests</string>
+    <string name="lighton">Light on</string>
+    <string name="lightoff">Light off</string>
+    <string name="credit">
+        iDoc360 for Android is built off of a couple of amazing open source projects built by others. Below you can find a complete list of
+        all of the projects used to build this app. Big shout-out to these sources as without them, iDoc360 for Android would not
+        be the same.
+    </string>
+    <string name="nrfcredittitle">
+        nRF UART v2.0
+    </string>
+    <string name="nrfcreditcontent">
+        Copyright 2014 Nordic Semiconductor (2014)\n\n
+
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n\n
+
+            http://www.apache.org/licenses/LICENSE-2.0\n\n
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    </string>
+    <string name="blkscredit">
+        BLKS Watchface by Edwin Finch and Philipp Weder: BLKS, being a watchface designed by Philipp Weder and developed by Edwin Finch.
+    </string>
+
+
+    <!-- Nordic Strings -->
+
+    <string name="no_device">&lt;Select a device&gt;</string>
+    <string name="select_device">Select a device</string>
+    <string name="status">Status</string>
+    <string name="llsWrite">LinkLossAlert</string>
+    <string name="iasWrite">ImmediateAlert</string>
+    <string name="scanning">Scanning for devices...</string>
+    <string name="no_ble_devices">No LE devices found.</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Not connected</string>
+    <string name="ready">Ready</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="unpair">unpair</string>
+    <string name="pair">pair</string>
+    <string name="RadioButton1">Alert level high</string>
+    <string name="RadioButton2">Alert level mid</string>
+    <string name="RadioButton3">Stop alerting</string>
+    <string name="SystemId">SystemId</string>
+    <string name="ModelNumber">ModelNumber</string>
+    <string name="SerialNumber">SerialNumber</string>
+    <string name="FirmwareRevision">FirmwareRevision</string>
+    <string name="HardwareRevision">HardwareRevision</string>
+    <string name="SoftwareRevision">SoftwareRevision</string>
+    <string name="ManufactureName">ManufactureName</string>
+    <string name="RegCertDataList">RegCertDataList</string>
+    <string name="ManufactureId">    ManufactureId</string>
+    <string name="BatteryLevel">    Battery Level</string>
+    <string name="OrgId">    OrganizationId</string>
+    <string name="Txpower">    Txpower Level</string>
+    <string name="Noupdate">    No Update</string>
+    <string name="ReadTxPower">ReadTxPower</string>
+    <string name="high_alert">HIGH Alert triggered!</string>
+    <string name="low_alert">LOW Alert triggered!</string>
+    <string name="writeTxnoti">TxNoti</string>
+    <string name="readRssi">Read Rssi Value</string>
+    <string name="Readdummy">D Read</string>
+    <string name="removeBond">Remove Bond</string>
+    <string name="paired">paired</string>
+    <string name="popup_title">Quit nRF UART?</string>
+    <string name="popup_message">Do you want to quit this Application?</string>
+    <string name="popup_yes">YES</string>
+    <string name="popup_no">NO</string>
+    <string name="ble_not_supported">Bluetooth Low Energy not supported</string>
+    <string name="scan">Scan</string>
+    <string name="cancel">Cancel</string>
+</resources>

@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "data_framework.h"
 
-bool loggingData = false;
+bool loggingData = false, currentStatus = false;
 TextLayer *logging_layer;
 
 void process_tuple(Tuple *t){
@@ -39,8 +39,27 @@ void inbox(DictionaryIterator *iter, void *context){
 	}
 }
 
+void send_light_status(int on){
+	DictionaryIterator *iter;
+	app_message_outbox_begin(&iter);
+
+	if (iter == NULL) {
+		return;
+	}
+	dict_write_uint8(iter, 0, on);	
+	dict_write_end(iter); 
+	app_message_outbox_send();
+	if(isLogging()){
+		text_layer_set_text(logging_layer, "Gesture detected. Sending data to phone app for light control.");
+	}
+}
+
+void gesture_fired(){
+	send_light_status((int)currentStatus);
+	currentStatus = !currentStatus;
+}
+
 void send_data(uint8_t data){
-	Tuplet value = TupletInteger(1, 1);
 	DictionaryIterator *iter;
 	app_message_outbox_begin(&iter);
 
@@ -51,7 +70,7 @@ void send_data(uint8_t data){
 	dict_write_end(iter); 
 	app_message_outbox_send();
 	if(isLogging()){
-		text_layer_set_text(logging_layer, "Gesture detected. Sending random data to phone app for light control.");
+		//text_layer_set_text(logging_layer, "Gesture detected. Sending random data to phone app for light control.");
 	}
 }
 
