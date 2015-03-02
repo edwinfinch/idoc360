@@ -112,15 +112,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         @Override
         public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
             int dataInt = data.getUnsignedIntegerAsLong(0).intValue();
-            switch(dataInt){
-                case 0:
-
-                    break;
+            if(device_fragment.mBtAdapter != null) {
+                switch (dataInt) {
+                    case 0:
+                        device_fragment.sendLightMessage();
+                        break;
+                }
             }
         }
     };
 
     public void refreshElements(){
+        if(!pebble_fragment.isVisible()){
+            return;
+        }
         pebble_fragment.toggle_button.setEnabled(connected);
         pebble_fragment.install_button.setEnabled(connected);
         pebble_fragment.test_signal_button.setEnabled(connected);
@@ -191,10 +196,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         fragPosition = position;
         switch(position) {
             case 0:
-                fragmentManager.beginTransaction().replace(R.id.container, pebble_fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, device_fragment).commit();
                 break;
             case 1:
-                fragmentManager.beginTransaction().replace(R.id.container, device_fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, pebble_fragment).commit();
                 break;
             case 2:
                 fragmentManager.beginTransaction().replace(R.id.container, tutorial_fragment).commit();

@@ -69,8 +69,6 @@ public class DeviceListActivity extends Activity {
     private Handler mHandler;
     private boolean mScanning;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	
@@ -295,8 +293,14 @@ public class DeviceListActivity extends Activity {
             if (rssival != 0) {
                 tvrssi.setText("Rssi = " + String.valueOf(rssival));
             }
+            System.out.println("name = " + device.getName());
+            if(device.getName() == null){
+                tvname.setText("[No name]");
+            }
+            else{
+                tvname.setText(device.getName());
+            }
 
-            tvname.setText(device.getName());
             tvadd.setText(device.getAddress());
             if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 Log.i(TAG, "device::"+device.getName());

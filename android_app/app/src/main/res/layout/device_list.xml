@@ -15,66 +15,52 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/myWindowBackground"
+    android:padding="10dp">
 
-    <RelativeLayout
+    <ListView
+        android:id="@+id/new_devices"
         android:layout_width="fill_parent"
+        android:layout_height="485dp"
+        android:stackFromBottom="false"
+        android:textColor="@color/text"
+        style="@style/SelectTheme"
+        android:layout_weight="0.89"
+        android:layout_above="@+id/empty"
+        android:background="@color/myWindowBackground"
+        android:layout_below="@+id/selectDeviceTV"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#666" >
+        android:text="@string/scanning"
+        android:layout_above="@+id/btn_cancel"
+        android:layout_centerHorizontal="true"
+        android:padding="5dp"/>
 
-        <TextView
-            android:id="@+id/title_devices"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:paddingLeft="12dp"
-            android:paddingRight="50dp"
-            android:text="@string/select_device"
-            android:textColor="#fff"
-            android:textSize="15dip" />
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@android:string/cancel"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:padding="10dp"/>
 
-        <ImageView
-            android:id="@+id/about"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_menu_info_details" />
-    </RelativeLayout>
-    <LinearLayout android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
-        <ListView
-            android:id="@+id/new_devices"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="2"
-            android:stackFromBottom="true"
-            android:textColor="@color/text"
-            style="@style/SelectTheme" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/select"
+        android:id="@+id/selectDeviceTV"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/empty"
+        android:padding="10dp"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="2" />
-
-        <TextView
-            android:id="@+id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/scanning" />
-
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@android:string/cancel" />
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

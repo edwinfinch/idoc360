@@ -133,9 +133,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("Pebble Manager", getResources().getDrawable(R.drawable.pebble_icon)));
         items.add(new NavigationItem("Device Manager", getResources().getDrawable(R.drawable.device_icon)));
-        items.add(new NavigationItem("Tutorial", getResources().getDrawable(R.drawable.tutorial_icon)));
+        items.add(new NavigationItem("Pebble Manager", getResources().getDrawable(R.drawable.pebble_icon)));
         items.add(new NavigationItem("Open Source", null));
         return items;
     }

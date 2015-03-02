@@ -5,26 +5,17 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-        <TextView
-            android:id="@+id/deviceLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/device"
-            android:textColor="@color/text"
-            android:textSize="20dp"
-            android:layout_alignTop="@+id/rssival"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:id="@+id/deviceName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/disconnected"
-            android:textColor="@color/text"
-            android:textSize="15dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/deviceLabel"
-            android:layout_toStartOf="@+id/rssival" />
+    <TextView
+        android:id="@+id/deviceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nodevice"
+        android:textColor="@color/text"
+        android:textSize="15dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/rssival"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"/>
 
         <TextView
             android:id="@+id/rssival"
@@ -72,5 +63,32 @@
         android:layout_above="@+id/lightOn"
         android:layout_alignEnd="@+id/btn_select"
         android:textColor="@color/text" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/connectalready"
+        android:id="@+id/prevDeviceButton"
+        android:layout_below="@+id/rssival"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_alignEnd="@+id/rssival" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/debugScrollList"
+        android:layout_below="@+id/prevDeviceButton"
+        android:layout_above="@+id/lightOn"
+        android:layout_alignStart="@+id/lightOn"
+        android:layout_alignEnd="@+id/lightOff" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/clearlog"
+        android:id="@+id/clearLogButton"
+        android:layout_below="@+id/textView6"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

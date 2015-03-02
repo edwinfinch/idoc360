@@ -32,6 +32,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ScrollView;
 
 import java.util.List;
 import java.util.UUID;
@@ -74,7 +75,7 @@ public class UartService extends Service {
     public static final UUID RX_SERVICE_UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
     public static final UUID RX_CHAR_UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
     public static final UUID TX_CHAR_UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-    
+
    
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -213,8 +214,7 @@ public class UartService extends Service {
         }
 
         // Previously connected device.  Try to reconnect.
-        if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
-                && mBluetoothGatt != null) {
+        if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress) && mBluetoothGatt != null) {
             Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
             if (mBluetoothGatt.connect()) {
                 mConnectionState = STATE_CONNECTING;
@@ -229,9 +229,7 @@ public class UartService extends Service {
             Log.w(TAG, "Device not found.  Unable to connect.");
             return false;
         }
-        // We want to directly connect to the device, so we are setting the autoConnect
-        // parameter to false.
-        mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
+        mBluetoothGatt = device.connectGatt(this, true, mGattCallback);
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
@@ -342,10 +340,13 @@ public class UartService extends Service {
     
     public void writeRXCharacteristic(byte[] value)
     {
-    
-    	
+        if (mBluetoothGatt == null) {
+            System.out.println("BluetoothGatt is null, returning");
+            return;
+        }
+
     	BluetoothGattService RxService = mBluetoothGatt.getService(RX_SERVICE_UUID);
-    	showMessage("mBluetoothGatt null"+ mBluetoothGatt);
+    	showMessage("mBluetoothGatt = "+ mBluetoothGatt);
     	if (RxService == null) {
             showMessage("Rx service not found!");
             broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
@@ -357,14 +358,14 @@ public class UartService extends Service {
             broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
             return;
         }
-        RxChar.setValue(value);
-    	boolean status = mBluetoothGatt.writeCharacteristic(RxChar);
+        boolean status0 = RxChar.setValue(value);
+    	boolean status1 = mBluetoothGatt.writeCharacteristic(RxChar);
     	
-        Log.d(TAG, "write TXchar - status=" + status);  
+        Log.d(TAG, "write TXchar - status of write=" + status1 + " and status of rx char=" + status0);
     }
     
     private void showMessage(String msg) {
-        Log.e(TAG, msg);
+        Log.i(TAG, msg);
     }
     /**
      * Retrieves a list of supported GATT services on the connected device. This should be

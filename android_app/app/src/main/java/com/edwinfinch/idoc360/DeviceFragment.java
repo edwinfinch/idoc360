@@ -1,12 +1,18 @@
 package com.edwinfinch.idoc360;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -17,6 +23,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,9 +36,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -47,15 +56,17 @@ public class DeviceFragment extends Fragment {
     private static final int UART_PROFILE_CONNECTED = 20;
     private static final int UART_PROFILE_DISCONNECTED = 21;
     private static final int STATE_OFF = 10;
+    public boolean currentLightState = false;
 
     TextView mRemoteRssiVal;
     RadioGroup mRg;
     private int mState = UART_PROFILE_DISCONNECTED;
     private UartService mService = new UartService();
-    private BluetoothDevice mDevice = null;
-    private BluetoothAdapter mBtAdapter = null;
-    private ArrayAdapter<String> listAdapter;
-    private Button btnConnectDisconnect, btnLightOn, btnLightOff;
+    public BluetoothDevice mDevice = null;
+    public BluetoothAdapter mBtAdapter = null;
+    private Button btnConnectDisconnect, btnLightOn, btnLightOff, reconnectButton, clearLogsButton;
+    private TextView previousDeviceTV, debugTextView;
+    ScrollView debugScrollView;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -76,14 +87,18 @@ public class DeviceFragment extends Fragment {
             if (action.equals(UartService.ACTION_GATT_CONNECTED)) {
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
-                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                        FileManager.writeDevice(getActivity().getApplicationContext(), mDevice.getAddress());
                         Log.d(TAG, "UART_CONNECT_MSG");
-                        ((TextView) llLayout.findViewById(R.id.deviceName)).setText(mDevice.getName() + " - ready");
-                        listAdapter.add("[" + currentDateTimeString + "] Connected to: " + mDevice.getName());
+                        previousDeviceTV.setText(FileManager.getDeviceStatus(getActivity(), true));
+                        debug("Connected to: " + mDevice.getAddress());
                         mState = UART_PROFILE_CONNECTED;
-                        btnConnectDisconnect.setText(R.string.disconnect);
+                        reconnectButton.setText(R.string.disconnectalready);
                         btnLightOn.setEnabled(true);
                         btnLightOff.setEnabled(true);
+                        reconnectButton.setEnabled(true);
+                        NotificationCompat.Action action1 = new NotificationCompat.Action(R.drawable.x_icon, "Disconnect", null);
+                        NotificationCompat.Action action2 = new NotificationCompat.Action(R.drawable.settings_icon_notif, "Settings", null);
+                        com.edwinfinch.idoc360.NotificationManager.manageConstantNotification(getActivity(), true, "Connected", FileManager.getDeviceStatus(getActivity(), true), action1, action2);
                     }
                 });
             }
@@ -92,16 +107,17 @@ public class DeviceFragment extends Fragment {
             if (action.equals(UartService.ACTION_GATT_DISCONNECTED)) {
                 getActivity().runOnUiThread(new Runnable() {
                     public void run() {
-                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         Log.d(TAG, "UART_DISCONNECT_MSG");
-                        ((TextView) llLayout.findViewById(R.id.deviceName)).setText("Not Connected");
-                        listAdapter.add("[" + currentDateTimeString + "] Disconnected to: " + mDevice.getName());
+                        previousDeviceTV.setText(FileManager.getDeviceStatus(getActivity(), false));
+                        debug("Disconnected to: " + mDevice.getAddress());
                         mState = UART_PROFILE_DISCONNECTED;
                         mService.close();
-                        //setUiState();
-                        btnConnectDisconnect.setText(R.string.connect);
+                        reconnectButton.setText(R.string.connectalready);
                         btnLightOn.setEnabled(false);
                         btnLightOff.setEnabled(false);
+                        reconnectButton.setEnabled(true);
+                        NotificationCompat.Action action1 = new NotificationCompat.Action(R.drawable.refresh, "Reconnect", null);
+                        com.edwinfinch.idoc360.NotificationManager.manageConstantNotification(getActivity(), false, "Disconnected", FileManager.getDeviceStatus(getActivity(), false), action1);
                     }
                 });
             }
@@ -120,7 +136,6 @@ public class DeviceFragment extends Fragment {
                         try {
                             String text = new String(txValue, "UTF-8");
                             String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                            listAdapter.add("[" + currentDateTimeString + "] RX: " + text);
 
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
@@ -144,6 +159,7 @@ public class DeviceFragment extends Fragment {
 
         LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).registerReceiver(UARTStatusChangeReceiver, makeGattUpdateIntentFilter());
     }
+
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(UartService.ACTION_GATT_CONNECTED);
@@ -169,15 +185,17 @@ public class DeviceFragment extends Fragment {
                     mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
 
                     Log.d(TAG, "... onActivityResultdevice.address==" + mDevice + "mserviceValue" + mService);
-                    ((TextView) llLayout.findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - connecting");
+                    previousDeviceTV.setText("...");
+                    reconnectButton.setText(getResources().getString(R.string.attempting));
                     mService.connect(deviceAddress);
+                    FileManager.writeDevice(getActivity().getApplicationContext(), deviceAddress);
                 }
                 break;
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     Toast.makeText(getActivity(), "Bluetooth has turned on ", Toast.LENGTH_SHORT).show();
-
+                    debug("Bluetooth request accepted");
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
@@ -191,6 +209,72 @@ public class DeviceFragment extends Fragment {
         }
     }
 
+    public void sendLightMessage(boolean on){
+        if(mService == null){
+            return;
+        }
+        if(on){
+            String message = "on\n";
+            byte[] value;
+            try {
+                //send data to service
+                value = message.getBytes("UTF-8");
+                mService.writeRXCharacteristic(value);
+                //Update the log with time stamp
+                debug(getResources().getString(R.string.sendingcommand) + " on");
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                Toast.makeText(getActivity().getApplicationContext(), "Error sending message: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+        else{
+            String message = "off\n";
+            byte[] value;
+            try {
+                value = message.getBytes("UTF-8");
+                mService.writeRXCharacteristic(value);
+                debug(getResources().getString(R.string.sendingcommand) + " off");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity().getApplicationContext(), "Error sending message: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+        currentLightState = !currentLightState;
+    }
+
+    public void sendLightMessage(){
+        sendLightMessage(currentLightState);
+    }
+
+    private void debug(String string){
+         debugTextView.append(System.currentTimeMillis() + ": " + string + "\n");
+    }
+
+    private void fireSelector(){
+        if (!mBtAdapter.isEnabled()) {
+            Log.i(TAG, "onClick - BT not enabled yet");
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+        }
+        else {
+            if (btnConnectDisconnect.getText().equals(getResources().getString(R.string.connect))){
+
+                //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
+
+                Intent newIntent = new Intent(getActivity(), DeviceListActivity.class);
+                startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
+            } else {
+                //Disconnect button pressed
+                if (mDevice!=null)
+                {
+                    mService.disconnect();
+
+                }
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentActivity faActivity = super.getActivity();
@@ -198,47 +282,85 @@ public class DeviceFragment extends Fragment {
 
         llLayout = (RelativeLayout)inflater.inflate(R.layout.main, container, false);
 
+        debugScrollView = (ScrollView)llLayout.findViewById(R.id.debugScrollList);
+        debugTextView = new TextView(getActivity().getApplicationContext());
+        debugTextView.setText("Debug Log:\n");
+        debugTextView.setTextColor(getResources().getColor(R.color.text));
+        debugScrollView.addView(debugTextView);
+
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null) {
             Toast.makeText(getActivity(), "Bluetooth is not available", Toast.LENGTH_LONG).show();
             getActivity().finish();
             return null;
         }
-        listAdapter = new ArrayAdapter<String>(this.getActivity().getApplicationContext(), R.layout.message_detail);
         service_init();
+
+        previousDeviceTV = (TextView)llLayout.findViewById(R.id.deviceName);
 
         btnConnectDisconnect = (Button)llLayout.findViewById(R.id.btn_select);
         btnLightOff = (Button)llLayout.findViewById(R.id.lightOff);
         btnLightOn = (Button)llLayout.findViewById(R.id.lightOn);
+        reconnectButton = (Button)llLayout.findViewById(R.id.prevDeviceButton);
+        clearLogsButton = (Button)llLayout.findViewById(R.id.clearLogButton);
+
+        if(!mBtAdapter.isEnabled()){
+            reconnectButton.setText(getResources().getString(R.string.btoff));
+        }
+
+        String deviceSaved = FileManager.getDeviceAddress(getActivity().getApplicationContext());
+        if(deviceSaved != null){
+            mDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceSaved);
+            previousDeviceTV.setText("iDoc " + FileManager.getDeviceName(getActivity().getApplicationContext()) + " " + getResources().getString(R.string.ex_dis));
+        }
+        else{
+            previousDeviceTV.setText(getResources().getString(R.string.nodevice));
+            reconnectButton.setEnabled(false);
+            reconnectButton.setText("Select a device below");
+        }
+
 
         mService.mBluetoothAdapter = mBtAdapter;
         //mService.mBluetoothManager =
 
+        clearLogsButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                debugTextView.setText("Debug Log:\n");
+            }
+        });
 
         // Handler Disconnect & Connect button
         btnConnectDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mBtAdapter.isEnabled()) {
-                    Log.i(TAG, "onClick - BT not enabled yet");
-                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                if(FileManager.getDeviceAddress(getActivity().getApplicationContext()) != null) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(getResources().getString(R.string.newdevice))
+                            .setMessage(getResources().getString(R.string.newdevicewarning))
+                            .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mService.disconnect();
+                                    String add = FileManager.getDeviceName(getActivity().getApplicationContext());
+                                    if(FileManager.deleteDevice(getActivity().getApplicationContext())){
+                                        Toast.makeText(getActivity().getApplicationContext(), add + " " + getResources().getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(getActivity().getApplicationContext(), add + " " + getResources().getString(R.string.notdeleted), Toast.LENGTH_SHORT).show();
+                                    }
+                                    previousDeviceTV.setText(getResources().getString(R.string.nodevice));
+                                    reconnectButton.setEnabled(false);
+                                    reconnectButton.setText("Select a device below");
+                                    debug("Device deleted");
+                                    fireSelector();
+                                }
+                            })
+                            .setNegativeButton(getResources().getString(R.string.cancel), null)
+                            .show();
                 }
-                else {
-                    if (btnConnectDisconnect.getText().equals("Connect")){
-
-                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-
-                        Intent newIntent = new Intent(getActivity(), DeviceListActivity.class);
-                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
-                    } else {
-                        //Disconnect button pressed
-                        if (mDevice!=null)
-                        {
-                            mService.disconnect();
-
-                        }
-                    }
+                else{
+                    fireSelector();
                 }
             }
         });
@@ -246,41 +368,43 @@ public class DeviceFragment extends Fragment {
         btnLightOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = "on\n";
-                byte[] value;
-                try {
-                    //send data to service
-                    value = message.getBytes("UTF-8");
-                    mService.writeRXCharacteristic(value);
-                    //Update the log with time stamp
-                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                    listAdapter.add("["+currentDateTimeString+"] TX: "+ message);
-                    Toast.makeText(getActivity().getApplicationContext(), "Sending command: on", Toast.LENGTH_LONG).show();
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    Toast.makeText(getActivity().getApplicationContext(), "Error sending message: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                }
+                sendLightMessage(true);
             }
         });
 
         btnLightOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = "off\n";
-                byte[] value;
-                try {
-                    //send data to service
-                    value = message.getBytes("UTF-8");
-                    mService.writeRXCharacteristic(value);
-                    //Update the log with time stamp
-                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                    listAdapter.add("["+currentDateTimeString+"] TX: "+ message);
-                    Toast.makeText(getActivity().getApplicationContext(), "Sending command: off", Toast.LENGTH_LONG).show();
-                } catch (UnsupportedEncodingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    Toast.makeText(getActivity().getApplicationContext(), "Error sending message: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                sendLightMessage(false);
+            }
+        });
+
+        reconnectButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(reconnectButton.getText().equals(getResources().getString(R.string.btoff))){
+                    boolean result = mBtAdapter.enable();
+                    debug("Enabling bluetooth... Result: " + result);
+                    if(result){
+                        reconnectButton.setText(getResources().getString(R.string.connectalready));
+                    }
+                    else{
+                        debug("Failed to turn on Bluetooth. Please turn it on yourself.");
+                    }
+                    return;
+                }
+                if(reconnectButton.getText().equals(getResources().getString(R.string.connectalready))){
+                    String deviceAddress = FileManager.getDeviceAddress(getActivity().getApplicationContext());
+                    debug("Attempting to reconnect to " + FileManager.getDeviceAddress(getActivity().getApplicationContext()));
+                    reconnectButton.setText(getResources().getString(R.string.reconnecting));
+                    reconnectButton.setEnabled(false);
+                    mService.connect(deviceAddress);
+                    com.edwinfinch.idoc360.NotificationManager.reconnectNotification(getActivity());
+                }
+                else{
+                    debug("Disconnecting");
+                    mService.disconnect();
+                    reconnectButton.setEnabled(false);
                 }
             }
         });

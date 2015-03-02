@@ -21,10 +21,27 @@
         Please consult support by through the listing on the Play Store, or emailing contact@edwinfinch.com.</string>
     <string name="debuglog">Debug log</string>
     <string name="device">Device</string>
-    <string name="connect">Connect</string>
+    <string name="connect">Connect Another Device</string>
+    <string name="connectalready">Reconnect</string>
+    <string name="disconnectalready">Disconnect</string>
+    <string name="nodevice">No device saved :(</string>
+    <string name="clearlog">Clear Logs</string>
     <string name="devicetests">Device Tests</string>
     <string name="lighton">Light on</string>
     <string name="lightoff">Light off</string>
+    <string name="forandroid">for Android</string>
+    <string name="select">Select Device</string>
+    <string name="ex_dis">is disconnected.</string>
+    <string name="ex_con">is connected.</string>
+    <string name="deleted">deleted.</string>
+    <string name="notdeleted">not deleted.</string>
+    <string name="newdevice">New Device?</string>
+    <string name="yes">Yes</string>
+    <string name="reconnecting">Reconnecting...</string>
+    <string name="attempting">Attempting to connect...</string>
+    <string name="sendingcommand">Sending command: </string>
+    <string name="btoff">Click to Enable Bluetooth</string>
+    <string name="newdevicewarning">Are you sure you want to select a new device?\n\nPressing \'Yes\' will result in your current device address being erased, and you\'ll need to reconnect it again before being able to use it.</string>
     <string name="credit">
         iDoc360 for Android is built off of a couple of amazing open source projects built by others. Below you can find a complete list of
         all of the projects used to build this app. Big shout-out to these sources as without them, iDoc360 for Android would not
